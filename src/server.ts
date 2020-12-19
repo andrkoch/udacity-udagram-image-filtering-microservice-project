@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import Axios from 'axios';
 
 (async () => {
 
@@ -28,7 +29,40 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
   /**************************************************************************** */
+  app.get("/filteredimage", async (req, res) => {
 
+    const url = req.query.image_url;
+
+
+    const response = await Axios.head(url).then((response) => {
+     return response;
+    }, (error) => {
+      console.log(error);
+      return error
+    });
+
+    let status = response.status 
+    let path = ""
+    if ( status === 200 ) {
+      try {   
+        path = await filterImageFromURL(url)      
+      }
+      catch(e) {
+        status = 422
+      }
+    }
+
+    if (! status) { status = 422 }
+
+    if (status === 200 && path != "") {
+      res.status(200).sendFile(path)
+    }
+    else 
+    {
+      res.status(status).send()
+    }
+  });
+  
   //! END @TODO1
   
   // Root Endpoint
