@@ -33,7 +33,6 @@ import Axios from 'axios';
 
     const url = req.query.image_url;
 
-
     const response = await Axios.head(url).then((response) => {
      return response;
     }, (error) => {
@@ -43,7 +42,7 @@ import Axios from 'axios';
 
     let status = response.status 
     let path = ""
-    if ( status === 200 ) {
+    if ( status === 200) {
       try {   
         path = await filterImageFromURL(url)      
       }
@@ -55,7 +54,7 @@ import Axios from 'axios';
     if (! status) { status = 422 }
 
     if (status === 200 && path != "") {
-      res.status(200).sendFile(path)
+      res.status(status).sendFile(path)
     }
     else 
     {
